@@ -1,0 +1,6 @@
+AGREGAR 13131313-3 Carla Una_estudiante_de_literatura
+AGREGAR 14141414-4 Diego Un_estudiante_de_filosofia
+AGREGAR 15151515-5 Eduardo Un_estudiante_de_ingenieria
+ESTADISTICAS
+MODIFICAR 13131313-3 Una_estudiante_de_sociologia
+ESTADISTICAS

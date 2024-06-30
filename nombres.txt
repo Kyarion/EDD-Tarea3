@@ -1,0 +1,9 @@
+Cristobal Carrión 202373598-1 203
+Carlos Bravo 202373531-0 203
+
+Programación Cristobal Carrión:
+Progamó modificar, y elaboró todos los comentarios segun formato pedido.
+
+Programación Carlos Bravo:
+Programó todo lo centrado en el main y las demas funciones.
+

@@ -3,6 +3,11 @@
 #include <string>
 using namespace std;
 
+/*****
+* struct cuenta
+******
+* struct donde se guarda la informacion de cada alumno (rol, nombre, descripcion)
+*****/
 struct cuenta
 {
     // El rol es el identificador de la persona.
@@ -11,6 +16,12 @@ struct cuenta
     bool existencia = false; // Si es false, no existe cuenta, y cuando sea creada una, este parametro será cambiado a true
     int colisiones = 0;
 };
+
+/*****
+* class registro_cuentas
+******
+* Clase para manejar la tabla de 
+*****/
 class registro_cuentas
 {
 private:
@@ -29,7 +40,6 @@ private:
                 valorh1 = (valorh1 * 17 + rol[i]) % ranuras;
             }
         }
-        // cout << "Valor de h1 es: " << valorh1 << endl;
         return valorh1;
     };
     int hash2(string rol)
@@ -63,17 +73,49 @@ public:
     void act_fc();
     float valor_fc();
 };
-
+/*****
+* registro_cuentas registro_cuentas
+******
+* funcion de creacion de elementos de la clase de registro_cuentas
+******
+* Input:
+* -
+******
+* Returns:
+* -
+*****/
 registro_cuentas::registro_cuentas()
 {
     tabla = new cuenta[ranuras];
 }
 
+/*****
+* registro_cuentas_~registro_cuentas
+******
+* funcion de eliminación de elementos de la clase registro_cuentas
+******
+* Input:
+* -
+******
+* Returns:
+* -
+*****/
 registro_cuentas::~registro_cuentas()
 {
     delete[] tabla;
 }
 
+/*****
+* cuenta obtener
+******
+* busca en la tabla el valor de rol entregado
+******
+* Input:
+* string rol: rol a buscar
+******
+* Returns:
+* cuenta tabla[pos]: en el caso de existir el rol en la tabla, devuelve el struct especifico de ese rol, cuenta cuenta_inex: en caso de no existir, devuelve un struct vacío
+*****/
 cuenta registro_cuentas::obtener(string rol)
 {
     int pos = hash(rol);
@@ -94,6 +136,18 @@ cuenta registro_cuentas::obtener(string rol)
     cuenta cuenta_inex; // Se crea una cuenta inexistente para definir que no existe el rol buscado
     return cuenta_inex;
 }
+
+/*****
+* void agregar
+******
+* agrega un nuevo rol, nombre y descripcion a la tabla. Primero se corrobora que el rol no exista.
+******
+* Input:
+* cuenta c: struct con los valores de cuenta a agregar
+******
+* Returns:
+* -
+*****/
 void registro_cuentas::agregar(cuenta c)
 {
     if (obtener(c.rol).existencia == true)
@@ -131,6 +185,18 @@ void registro_cuentas::agregar(cuenta c)
         }
     }
 }
+
+/*****
+* void eliminar
+******
+* elimina un struct de la tabla
+******
+* Input:
+* string rol: rol de la persona a eliminar
+******
+* Returns:
+* -
+*****/
 void registro_cuentas::eliminar(string rol)
 {
     cuenta cuenta_a_eliminar = obtener(rol);
@@ -150,14 +216,48 @@ void registro_cuentas::eliminar(string rol)
         }
     }
 }
-/*void registro_cuentas::modificar(string rol, string descripcion){
 
-}*/
+/*****
+* void modificar
+******
+* en caso de querer modificar la descripcion de algun alumno se utiliza esta funcion
+******
+* Input:
+* string rol: IDEM, string descripcion: nueva descripcion a reemplazar del rol asociado
+******
+* Returns:
+* -
+*****/
+void registro_cuentas::modificar(string rol, string descripcion){
+    cuenta cuenta_a_modificar = obtener(rol);
+    if (cuenta_a_modificar.existencia == false) {
+        cout << "Rol no existente" << endl;
+    }
+    else {
+        cuenta cuenta_vacia;
+        for (int i = 0; i < ranuras; i++) {
+            if (tabla[i].rol == rol) {
+                tabla[i].descripcion = descripcion;
+            }
+        }
+    }
+}
 
+/*****
+* void redimensionar
+******
+* funcion que redimensiona la tabla para disminuir colisiones
+******
+* Input:
+* int n: valor a redimensionar
+******
+* Returns:
+* 
+*****/
 void registro_cuentas::redimensionar(int n) // Nos fijaremos que si la tabla es mayor a 60&, la aumentaremos para disminuir cantidad de posibles colisiones
 {
         int n_ranueras = ranuras * 2;
-        cuenta *n_tabla = new cuenta[n_ranueras]; // POR TERMINAR aaa
+        cuenta *n_tabla = new cuenta[n_ranueras];
         for (int i = 0; i < ranuras; i++){
             if (tabla[i].existencia != false){
                 int nt_pos = hash(tabla[i].rol);
@@ -174,6 +274,18 @@ void registro_cuentas::redimensionar(int n) // Nos fijaremos que si la tabla es 
         ranuras = n;
         act_fc();
     }
+
+/*****
+* void estadisticas
+******
+* muestra las estadisticas actuales (ranuras ocupadas, totales y factor de carga)
+******
+* Input:
+* -
+******
+* Returns:
+* -
+*****/
 void registro_cuentas::estadisticas()
 {
     float contador_stats = 0;
@@ -188,6 +300,18 @@ void registro_cuentas::estadisticas()
     cout << "RANURAS TOTALES: " << ranuras << endl;
     cout << "FACTOR DE CARGA: " << factor_de_carga << endl;
 }
+
+/*****
+* void act_fc
+******
+* actualiza el factor de carga
+******
+* Input:
+* -
+******
+* Returns:
+* -
+*****/
 void registro_cuentas::act_fc()
 {
     float contador_fc = 0.0;
@@ -200,6 +324,18 @@ void registro_cuentas::act_fc()
     }
     factor_de_carga = contador_fc / ranuras;
 }
+
+/*****
+* int main
+******
+* función principal que procesa el archivo de pruebas.txt
+******
+* Input:
+* -
+******
+* Returns:
+* -
+*****/
 int main()
 {
     ifstream archivo;
@@ -214,7 +350,6 @@ int main()
     }
     while (archivo >> text_fun)
     {
-        cout << "La funcion acutal es: " << text_fun << endl;
         if (text_fun == "AGREGAR")
         {
             archivo >> text_rol;
@@ -237,15 +372,13 @@ int main()
         {
             archivo >> text_rol;
             archivo >> text_desc;
-            cout << "ROL: " << text_rol << endl;
-            cout << "DESC: " << text_desc << endl;
+            regc.modificar(text_rol, text_desc);
         }
         else if (text_fun == "OBTENER")
         {
             archivo >> text_rol;
             cuenta cuenta_buscar = regc.obtener(text_rol);
             if (cuenta_buscar.existencia == true){
-                cout << cuenta_buscar.nombre << " " << cuenta_buscar.descripcion << endl;
             }
             else{
                 cout << "Rol no existente" << endl;
