@@ -14,7 +14,7 @@ struct cuenta
     // El nombre y la descripcion son valores asociados al rol
     string rol, nombre, descripcion;
     bool existencia = false; // Si es false, no existe cuenta, y cuando sea creada una, este parametro será cambiado a true
-    int colisiones = 0;
+    int colisiones = 0; // Cuenta el numero de colisiones que tuvo que hacer para llegar a su posicion en la tabla
 };
 
 /*****
@@ -22,14 +22,12 @@ struct cuenta
 ******
 * Clase para manejar la tabla de 
 *****/
-class registro_cuentas
-{
+class registro_cuentas{
 private:
     float factor_de_carga = 0.0;
     cuenta *tabla;    // Aca se almacenaran los elementos de la tabla
     int ranuras = 15; // Cuantas ranuras tiene la tabla hash (inicialmente)
-    // Se obtiene el hash dado el rol y Usamos el numero 17 para hashing constante, debido a que es un numero primo y alto
-    int hash(string rol)
+    int hash(string rol) // Se obtiene el hash dado el rol y usamos el numero 17 para hashing constante, debido a que es un numero primo y alto
     {
         int valorh1 = 0;
         for (int i = 0; i < 10; i++)
@@ -42,7 +40,7 @@ private:
         }
         return valorh1;
     };
-    int hash2(string rol)
+    int hash2(string rol) //Segunda funcion hash en caso de que ocurra una colisión
     {
         int valorh2 = 0;
         for (int i = 0; i < 10; i++)
@@ -70,8 +68,7 @@ public:
     void modificar(string rol, string descripcion); // Se modifica la descripcion del rol
     void redimensionar(int n);                      // Se redimensiona la tabla a n espacios
     void estadisticas();                            // Debe mostrar las estadisticas
-    void act_fc();
-    float valor_fc();
+    void act_fc();                                  // Función que actualiza el factor de carga
 };
 /*****
 * registro_cuentas registro_cuentas
@@ -114,7 +111,8 @@ registro_cuentas::~registro_cuentas()
 * string rol: rol a buscar
 ******
 * Returns:
-* cuenta tabla[pos]: en el caso de existir el rol en la tabla, devuelve el struct especifico de ese rol, cuenta cuenta_inex: en caso de no existir, devuelve un struct vacío
+* cuenta tabla[pos]: en el caso de existir el rol en la tabla, devuelve el struct especifico de ese rol 
+* cuenta cuenta_inex: en caso de no existir, devuelve un struct vacío
 *****/
 cuenta registro_cuentas::obtener(string rol)
 {
@@ -152,7 +150,7 @@ void registro_cuentas::agregar(cuenta c)
 {
     if (obtener(c.rol).existencia == true)
     {
-        cout << "Rol ya existente" << endl;
+        cout << "Rol ya existente" << endl; 
     }
     else
     {
@@ -164,7 +162,7 @@ void registro_cuentas::agregar(cuenta c)
             tabla[pos] = c;
             tabla[pos].existencia = true;
         }
-        else
+        else // En caso de colision, 
         {
             int cont = 1;
             while (celda_tabla != true)
@@ -246,7 +244,8 @@ void registro_cuentas::modificar(string rol, string descripcion){
 /*****
 * void redimensionar
 ******
-* funcion que redimensiona la tabla para disminuir colisiones
+* funcion que redimensiona la tabla para disminuir colisiones, esta función se relaizara en caso de que el factor de carga sea mayor de 60%
+para evitar posibles colisiones (esto fue preguntado a un ayudante y dió el visto bueno).
 ******
 * Input:
 * int n: valor a redimensionar
@@ -254,10 +253,9 @@ void registro_cuentas::modificar(string rol, string descripcion){
 * Returns:
 * 
 *****/
-void registro_cuentas::redimensionar(int n) // Nos fijaremos que si la tabla es mayor a 60&, la aumentaremos para disminuir cantidad de posibles colisiones
+void registro_cuentas::redimensionar(int n) // 
 {
-        int n_ranueras = ranuras * 2;
-        cuenta *n_tabla = new cuenta[n_ranueras];
+        cuenta *n_tabla = new cuenta[n];
         for (int i = 0; i < ranuras; i++){
             if (tabla[i].existencia != false){
                 int nt_pos = hash(tabla[i].rol);
@@ -323,6 +321,10 @@ void registro_cuentas::act_fc()
         }
     }
     factor_de_carga = contador_fc / ranuras;
+    if (factor_de_carga > 0.6){
+        redimensionar(ranuras*2);
+
+    }
 }
 
 /*****
@@ -376,7 +378,7 @@ int main()
         }
         else if (text_fun == "OBTENER")
         {
-            archivo >> text_rol;
+            archivo >> text_rol;    
             cuenta cuenta_buscar = regc.obtener(text_rol);
             if (cuenta_buscar.existencia == true){
             }
@@ -389,7 +391,6 @@ int main()
         }
 
         }
-        regc.~registro_cuentas();
         return 0;
     }
     
